@@ -21,13 +21,15 @@
     const outputPath = path.join(__dirname, './excel');
 
     // 遍历输入路径下的文件
-    fs.readdirSync(inputPath).forEach((fileName) => {
-      var inputFilePath = path.join(inputPath, fileName);
-      var outputFilePath = path.join(outputPath, fileName);
-      var [id, name] = fileName.replace(/\.pdf/,"").split('_'); // 解构、赋值 ['凌旺', 'X7778']
-      pdf2Excel({inputFilePath, outputFilePath, id, name});
-      // 根据遍历结果获取工号、姓名，生成文件输入输出路径，传给pdf2Excel方法
-    })
+    fs.readdirSync(inputPath)
+      .filter(fileName => fileName !== '.gitkeep')
+      .forEach((fileName) => {
+        var inputFilePath = path.join(inputPath, fileName);
+        var outputFilePath = path.join(outputPath, fileName);
+        var [id, name] = fileName.replace(/\.pdf/,"").split('_'); // 解构、赋值 ['凌旺', 'X7778']
+        pdf2Excel({inputFilePath, outputFilePath, id, name});
+        // 根据遍历结果获取工号、姓名，生成文件输入输出路径，传给pdf2Excel方法
+      })
   }
 
   // pdf2Excel
