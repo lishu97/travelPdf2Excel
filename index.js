@@ -38,13 +38,11 @@
   function pdf2Excel({inputFilePath, outputFilePath, id, name}){
     var wb = new xl.Workbook();
     var ws = wb.addWorksheet('Sheet 1');
-
     getPdfText(inputFilePath).then(pdfText => {
       const excelData = getExcelDataByPdfText(pdfText, id, name);
       getExcelLayout(wb,ws);
       getExcelHeader(wb, ws, excelData);
       getExcelDetail(wb,ws, excelData);
-
       wb.write(outputFilePath.replace(/\.pdf/, ".xlsx"));
     })
     .catch((error) => {
@@ -63,15 +61,16 @@
     return new Promise((resolve, reject) => {
       pdfParser.on("pdfParser_dataError", errData => reject(errData) );
       pdfParser.on("pdfParser_dataReady", pdfData => {
-        // TODO: 可能超过一页
-        const texts = pdfData.formImage.Pages[0].Texts.map(item => ({
-            ...item,
-            R: item.R = item.R.map(textInfo => ({
-                ...textInfo,
-                T: decodeURIComponent(textInfo.T)
-            }))
-        }));
-        const pdfText = texts.map(item => item.R[0].T).join('@@');
+        const pdfText = pdfData.formImage.Pages.reduce((data, page) => {
+            return data + page.Texts.map(item => ({
+              ...item,
+              R: item.R = item.R.map(textInfo => ({
+                  ...textInfo,
+                  T: decodeURIComponent(textInfo.T)
+              }))
+          }))
+          .map(item => item.R[0].T).join('@@');
+      }, '')
         resolve(pdfText)
       })
       pdfParser.loadPDF(inputFilePath);
@@ -94,14 +93,10 @@
       },
       title : '',
       arr : '',
-      total : '',
-
     };
-
     excelData.personInfo = { id, name} ;
     excelData.title = getExcelTitle(pdfText) ;
     excelData.arr = getExcelData(pdfText).arr;
-    excelData.total = getExcelData(pdfText).total;
     return excelData;
   }
 
@@ -111,14 +106,14 @@
       var result1 = yearAndDate.exec(pdfText);
       var year,date;
       if(result1[3] == result1[5]){
-          year = result1[2]+'年'
-          date = result1[3]+'月'
+        year = result1[2]+'年'
+        date = result1[3]+'月'
       }else if(result1[2] == result1[4]){
-          year = result1[2]+'年'
-          date = result1[3]+'-'+result1[5]+'月'
+        year = result1[2]+'年'
+        date = result1[3]+'-'+result1[5]+'月'
       }else{
-          year = result1[2]+'年'+result1[3]+'月-'
-          date = result1[4]+'年'+result1[5]+'月'
+        year = result1[2]+'年'+result1[3]+'月-'
+        date = result1[4]+'年'+result1[5]+'月'
       }
       return title = year + date + '交通费报销明细'   
     }
@@ -135,9 +130,6 @@
     var reg = /@@(\d{1,2})@@(.*?)@@(\d*-\d*)\s(\d*:\d*)\s(.*?)@@(.*?)@@(.*?)@@(.*?)@@(\d*\.\d*)@@(\d*\.\d*)/g
     var result = reg.exec(pdfText); 
     var arr=[]
-    var totalMoney = /\D*(\d*\.\d*)\D@@/
-    var result2 = totalMoney.exec(pdfText);
-    var total = '￥'+result2[1]
     let year = getExcelStartYear(pdfText)
     let lastDate = result[3];
     while(result !== null){
@@ -149,18 +141,14 @@
       }
       const date = `${year}/${+currentMonth}/${+currentDay}`;
       arr.push({
-          date,
-          reason: '加班至晚上10点后，无公交',
-          time: result[4],
-          money:'￥'+result[10],
+        date,
+        reason: '加班至晚上10点后，无公交',
+        time: result[4],
+        money: `${+result[10]}`,
       })
       result = reg.exec(pdfText);  
     }
-
-    return {
-      arr,
-      total
-    }
+    return { arr }
   }
 
   // excel布局
@@ -171,7 +159,7 @@
     ws.column(4).setWidth(10.75);
     ws.column(5).setWidth(11.25);
     for (let a = 0; a < 100; a++) {
-        ws.row(a).setHeight(20);
+      ws.row(a).setHeight(20);
     }
   }
 
@@ -180,44 +168,44 @@
     ws.cell(2,2,2,5,true).string('报销人：' + excelData.personInfo.name +' ' + excelData.personInfo.id);
     ws.cell(4,2,4,5,true).string(excelData.title).style(wb.createStyle({
       font: {
-          size:11,
-          bold:true,
-          name:'等线'
+        size:11,
+        bold:true,
+        name:'等线'
       },
       alignment: {
-          horizontal: 'center',
-          vertical: 'center'
+        horizontal: 'center',
+        vertical: 'center'
       },
       fill: {
-          type: 'pattern', 
-          patternType: 'solid', 
-          fgColor: 'f2f2f2', 
+        type: 'pattern', 
+        patternType: 'solid', 
+        fgColor: 'f2f2f2', 
       },
     }));
     ws.cell(5,2).string('日期').style(wb.createStyle({
       alignment: {
-          horizontal: 'center',
-          vertical: 'center'
+        horizontal: 'center',
+        vertical: 'center'
       },
     }));
-  ws.cell(5,3).string('事由').style(wb.createStyle({
-    alignment: {
+    ws.cell(5,3).string('事由').style(wb.createStyle({
+      alignment: {
         horizontal: 'center',
         vertical: 'center'
-    },
-  }));
-  ws.cell(5,4).string('上车时间').style(wb.createStyle({
-    alignment: {
+      },
+    }));
+    ws.cell(5,4).string('上车时间').style(wb.createStyle({
+      alignment: {
         horizontal: 'center',
         vertical: 'center'
-    },
-  }));
-  ws.cell(5,5).string('金额').style(wb.createStyle({
-    alignment: {
+      },
+    }));
+    ws.cell(5,5).string('金额').style(wb.createStyle({
+      alignment: {
         horizontal: 'center',
         vertical: 'center'
-    },
-  }));
+      },
+    }));
   }
 
   // excel内容、总计
@@ -228,12 +216,20 @@
       for (let key in arr[i]) {
         let detailData = arr[i][key];
         const col = 1 + key2Index[key];
-
-        ws.cell(row, col).string(detailData).style(wb.createStyle({
+        if ( key !== 'money') {
+          ws.cell(row, col).string(detailData).style(wb.createStyle({
+            alignment: {
+              horizontal: 'center',
+              vertical: 'center'
+            },
+          }))
+        }
+        ws.cell(row, 5).number(+arr[i][key='money']).style(wb.createStyle({
           alignment: {
             horizontal: 'center',
             vertical: 'center'
           },
+          numberFormat: '"￥"#,##0.00_);("￥"#,##0.00)'
         }))
       }
     }
@@ -243,30 +239,31 @@
         vertical: 'center'
       },
     }))
-    ws.cell(8+i,5).string(excelData.total).style(wb.createStyle({
+    ws.cell(8+i,5) .formula(`sum(E6 :E${i+5})`).style(wb.createStyle({
       alignment: {
         horizontal: 'center',
         vertical: 'center'
       },
+      numberFormat: '"￥"#,##0.00_);("￥"#,##0.00)'
     }))
     for (let a = 4; a < i+9; a++) {
       for (let b = 2; b < 6; b++) {
-          ws.cell(a,b).style(wb.createStyle({
-              border: {
-                left: {
-                    style: 'thin'
-                },
-                right: {
-                    style: 'thin'
-                },
-                top: {
-                    style: 'thin'
-                },
-                bottom: {
-                    style: 'thin'
-                },
-            }
+        ws.cell(a,b).style(wb.createStyle({
+          border: {
+            left: {
+              style: 'thin'
+            },
+            right: {
+              style: 'thin'
+            },
+            top: {
+              style: 'thin'
+            },
+            bottom: {
+              style: 'thin'
+            },
+          }
         }))   
       }
     }
-} 
+  } 
