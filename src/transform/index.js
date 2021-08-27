@@ -60,3 +60,5 @@ function transform(data) {
         }
     })
 };
+
+module.exports = transform;

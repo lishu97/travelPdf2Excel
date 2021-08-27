@@ -43,7 +43,4 @@ function read() {
         })
     })
 }
-// read().then(result => {
-//     console.log(result)
-// });
 module.exports = read;
