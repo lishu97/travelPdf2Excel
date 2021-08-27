@@ -8,9 +8,9 @@ function getDetailByText(pdfText) {
         case /滴滴出行/.test(pdfText): {
             return parseTextDidi(pdfText);
         }
-        // case /高德地图/.test(pdfText): {
-        //     return parseTextGaode(pdfText);
-        // }
+        case /高德地图/.test(pdfText): {
+            return parseTextGaode(pdfText);
+        }
         // case /T(@@)?3(@@)?出(@@)?行/.test(pdfText): {
         //     return parseTextT3(pdfText);
         // }
@@ -26,7 +26,12 @@ module.exports = function(pdfTexts){
     pdfTexts.forEach(pdfText => {
         detail = detail.concat(getDetailByText(pdfText));
     })
-    return detail.sort((a, b) => a.time - b.time)
+    return detail.sort((a, b) => {
+        if(!b.moment || !a.moment) {
+            console.log(a, b);
+        }
+        return a.moment.valueOf() - b.moment.valueOf();
+    })
         .map(item => ({
             ...item,
             time: moment(item.moment).format('HH:mm'),   

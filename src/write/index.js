@@ -1,34 +1,23 @@
-var data = [
-    {
-        id: 'X2121',
-        name: 'xxx',
-        title: 'xxx',
-        detail: [
-            {
-                date: "2020/10/1",
-                money: '8.7',
-                reason: 'xxx',
-                time: '12:09',
-            }
-        ]
-    },
-    {
-        id: 'X2221',
-        name: 'xxx2',
-        title: 'xxx2',
-        detail: [
-            {
-                date: "2020/10/2",
-                money: '8.2',
-                reason: 'xx2',
-                time: '12:02',
-            }
-        ]
-    },
-]
+const xl = require("excel4node");
+const path = require('path');
+const { OUTPUT_PATH } = require('../common/path');
+const getExcelLayout = require('./excelLayout')
+const getExcelHeader = require('./excelHeader')
+const getExcelDetail = require('./excelDetail')
 
-write(data);
-
-function write(){
-    
+function writeExcel(outputFilePath, excelData){
+    var wb = new xl.Workbook();
+    var ws = wb.addWorksheet('Sheet 1');
+    getExcelLayout(wb,ws);
+    getExcelHeader(wb, ws,excelData);
+    getExcelDetail(wb,ws, excelData);
+    wb.write(outputFilePath);
 }
+
+function write(excelDatas) {
+    excelDatas.forEach(function(excelData){
+        writeExcel(path.join(OUTPUT_PATH, `/${excelData.id }_${excelData.name}.xlsx`), excelData);
+    })
+}
+
+module.exports = write;
