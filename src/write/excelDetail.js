@@ -15,23 +15,22 @@ function getExcelDetail(wb, ws,excelData) {
     },
   });
   
-  // excelData.forEach(excelData => {
     var detail = excelData.detail;
     for (var i = 0; i < detail.length; i++) {
       const row = 6 + i;
       for (let key in detail[i]) {
         let detailData = detail[i][key];
-        console.log(key2Index[key])
         const col = 1 + key2Index[key];
         if (key !== 'money') {
           ws.cell(row, col)
             .string(detailData)
             .style(style);
-        }
-        ws.cell(row, 5)
+        }else{
+          ws.cell(row, 5)
           .number(+detail[i][key = 'money']) 
           .style(style)
           .style({numberFormat: '"￥"#,##0.00_);("￥"#,##0.00)'});
+        }
       }
     }
 
@@ -55,7 +54,6 @@ function getExcelDetail(wb, ws,excelData) {
         }))
       }
     }
-  // })
 }
 
 module.exports = getExcelDetail;

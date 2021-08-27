@@ -11,9 +11,9 @@ function getDetailByText(pdfText) {
         case /高德地图/.test(pdfText): {
             return parseTextGaode(pdfText);
         }
-        // case /T(@@)?3(@@)?出(@@)?行/.test(pdfText): {
-        //     return parseTextT3(pdfText);
-        // }
+        case /T(@@)?3(@@)?出(@@)?行/.test(pdfText): {
+            return parseTextT3(pdfText);
+        }
         default: {
             console.warn('未识别的行程单类型', pdfText);
             return []

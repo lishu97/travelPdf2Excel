@@ -4,18 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.1.2",
     "excel4node": "^1.7.2",
-    "inquirer": "^8.1.2",
-    "lodash.get": "^4.4.2",
     "moment": "^2.29.1",
-    "node-xlsx": "^0.17.1",
     "pdf2json": "^1.2.3"
   }
 }

@@ -10,7 +10,10 @@ function transform(data) {
             id, 
             name,
             title,
-            detail,
+            detail: detail.map(item => {
+                delete item.moment;
+                return item;
+            })
         }
     })
 };
