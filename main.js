@@ -5,5 +5,4 @@ const reada = read();
 reada.then(res => {
     const transforma = transform(res);
     write(transforma)
-    console.log(transforma)
 })
