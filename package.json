@@ -1,19 +1,31 @@
 {
   "name": "travel-pdf-to-excel",
-  "version": "1.1.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "将滴滴打车、高德打车、T3出行行程单转换为指定格式的excel文件",
   "main": "index.js",
   "scripts": {
-    "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node main.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "打车",
+    "行程单",
+    "pdf",
+    "excel"
+  ],
+  "author": {
+    "name": "Li Shu",
+    "email": "770383385@qq.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lishu97/travelPdf2Excel.git"
+  },
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.2",
     "excel4node": "^1.7.2",
     "moment": "^2.29.1",
-    "pdf2json": "^1.2.3"
+    "pdf2json": "^1.2.3",
+    "travel-pdf-to-excel": "^0.0.1"
   }
 }
