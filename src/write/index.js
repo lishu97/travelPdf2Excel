@@ -15,11 +15,11 @@ function writeExcel(outputFilePath, excelData){
     wb.write(outputFilePath);
 }
 
-function write(excelDatas) {
+function write(excelDatas, outputFilePath) {
     excelDatas.forEach(function(excelData){
-        writeExcel(path.join(OUTPUT_PATH, `/${excelData.id }_${excelData.name}.xlsx`), excelData);
+        writeExcel(outputFilePath || path.join(OUTPUT_PATH, `/${excelData.id }_${excelData.name}.xlsx`), excelData);
     })
-    console.log(`
+    !outputFilePath && console.log(`
     
     EXCEL生成成功：${chalk.green(OUTPUT_PATH)}
     
