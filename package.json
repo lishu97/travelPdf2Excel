@@ -1,6 +1,6 @@
 {
   "name": "travel-pdf-to-excel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "将滴滴打车、高德打车、T3出行行程单转换为指定格式的excel文件",
   "main": "index.js",
   "scripts": {
