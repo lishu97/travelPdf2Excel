@@ -22,10 +22,9 @@
   },
   "license": "ISC",
   "dependencies": {
-    "chalk": "^4.1.2",
-    "excel4node": "^1.7.2",
-    "moment": "^2.29.1",
-    "pdf2json": "^1.2.3",
-    "travel-pdf-to-excel": "^0.0.1"
+    "chalk": "4.1.2",
+    "excel4node": "1.7.2",
+    "moment": "2.29.1",
+    "pdf2json": "1.2.3"
   }
 }
